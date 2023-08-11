@@ -251,8 +251,10 @@ class NetCDFReader(MapReader):
         if self.timename in self.ds.variables:
             times = self.ds.variables[self.timename]
             assert hasattr(times, 'units'), "NetCDF time variable must have units attribute."
-            assert hasattr(times, 'calendar'), "NetCDF time variable must have calendar attribute."
-            self.datetimes = [num2date(t, units=times.units, calendar=times.calendar) for t in times[:]]
+            if hasattr(times, 'calendar'):
+                self.datetimes = [num2date(t, units=times.units, calendar=times.calendar) for t in times[:]]
+            else:
+                self.datetimes = [num2date(t, units=times.units) for t in times[:]]
         else:
             self.datetimes = None
 
